@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ShoppingCart, ChefHat, Trash2, Plus, Minus, ArrowLeft, CheckCircle, CreditCard, ExternalLink, LogIn, Utensils } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import payQR from './assets/pay_qr.jpg';
+
 const MENU_ITEMS = [
   { id: 1, name: 'Maggi', price: 30, image: '/maggi.png', desc: 'Classic comfort noodles with secret spice mix.' },
   { id: 2, name: 'Omelette', price: 59, image: '/omelette.png', desc: 'Fluffy eggs with fresh veggies and herbs.' },
@@ -110,54 +112,72 @@ const App = () => {
       </div>
     </div>
   );
-
   const ProcessingView = () => {
     const upiID = '8931040270@ptaxis';
-    // Adding mcc=5812 (Restaurants) and mode=02 (Secure intent) to improve Paytm/GPay trust
+    const mobileNo = '8931040270';
     const upiBase = `pa=${upiID}&pn=GastroGo&mcc=5812&mode=02&am=${total}&cu=INR&tn=Order_${Date.now()}`;
-    const upiLink = `upi://pay?${upiBase}`;
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiLink)}`;
     
     return (
-      <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '80vh', padding: '40px 20px', textAlign: 'center' }}>
-        <h2 style={{ fontSize: '2.5rem', marginBottom: 15 }}>Complete Payment</h2>
-        <p style={{ color: 'var(--text-secondary)', marginBottom: 30, maxWidth: 400 }}>
-          Select **GPay** or **Paytm** to finalize your order.
+      <div className="container animate-fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '80vh', padding: '40px 20px', textAlign: 'center' }}>
+        <h2 style={{ fontSize: '2.5rem', marginBottom: 15, fontWeight: 900 }}>Secure Checkout</h2>
+        <p style={{ color: 'var(--text-secondary)', marginBottom: 30, maxWidth: 500, fontSize: '1.1rem' }}>
+          Official Payment Portal for **Nimish Saxena**. Total: **₹{total}**
         </p>
         
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 30, width: '100%', maxWidth: 800 }}>
-          {/* Method 1: App Links */}
-          <div className="glass-morphism" style={{ padding: 30, borderRadius: 24, display: 'flex', flexDirection: 'column', gap: 15 }}>
-            <h3 style={{ marginBottom: 10, fontSize: '1.2rem' }}>Method 1: Quick Links</h3>
-            <button className="button-primary" style={{ justifyContent: 'center', padding: '16px', background: '#4285F4' }} onClick={() => window.location.href = `tez://upi/pay?${upiBase}`}>
-              Try Google Pay Again
-            </button>
-            <button className="button-primary" style={{ justifyContent: 'center', padding: '16px', background: '#00BAF2' }} onClick={() => window.location.href = `paytmmp://pay?${upiBase}`}>
-              Try Paytm Again
-            </button>
-            
-            <div style={{ marginTop: 20, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: 10 }}>Copy UPI ID for manual pay:</p>
-              <div style={{ background: 'rgba(255,255,255,0.05)', padding: '12px', borderRadius: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <code style={{ fontSize: '0.9rem', color: 'var(--accent)' }}>{upiID}</code>
-                <button onClick={() => { navigator.clipboard.writeText(upiID); }} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600 }}>COPY</button>
-              </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 30, width: '100%', maxWidth: 900 }}>
+          {/* Method 1: Official Scan & Pay */}
+          <div className="glass-morphism" style={{ padding: 40, borderRadius: 32, display: 'flex', flexDirection: 'column', alignItems: 'center', border: '2px solid var(--accent)', boxShadow: '0 0 50px rgba(255,140,0,0.2)' }}>
+            <h3 style={{ marginBottom: 20, fontSize: '1.4rem', color: 'var(--accent)', fontWeight: 800 }}>Method 1: Safe Scan</h3>
+            <div style={{ background: 'white', padding: 20, borderRadius: 24, marginBottom: 20 }}>
+              <img src={payQR} alt="Paytm QR Code" style={{ width: 220, height: 'auto', display: 'block', borderRadius: 12 }} />
             </div>
+            <a href={payQR} download="Nimish_Saxena_QR.jpg" className="button-secondary" style={{ width: '100%', justifyContent: 'center', background: 'rgba(255,255,255,0.05)', marginBottom: 20 }}>
+              Save QR to Gallery
+            </a>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+              1. Tap **"Save QR"** above.<br />
+              2. Open Paytm/GPay & click **"Scan"**.<br />
+              3. Select the saved photo to pay **Safe & Instantly**.
+            </p>
           </div>
 
-          {/* Method 2: QR Code */}
-          <div className="glass-morphism" style={{ padding: 30, borderRadius: 24, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <h3 style={{ marginBottom: 20, fontSize: '1.2rem' }}>Method 2: Scan QR</h3>
-            <p style={{ fontSize: '0.8rem', color: 'var(--accent)', marginBottom: 15, fontWeight: 600 }}>Trusted Method (No Alerts)</p>
-            <div style={{ background: 'white', padding: 15, borderRadius: 16, marginBottom: 15 }}>
-              <img src={qrUrl} alt="Payment QR Code" style={{ width: 180, height: 180, display: 'block' }} />
+          {/* Method 2: App Launchers */}
+          <div className="glass-morphism" style={{ padding: 40, borderRadius: 32, display: 'flex', flexDirection: 'column', gap: 20, justifyContent: 'center' }}>
+            <h3 style={{ fontSize: '1.4rem', color: '#00ff00', fontWeight: 800 }}>Method 2: One-Tap App</h3>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
+              <button className="button-primary" style={{ justifyContent: 'center', padding: '18px', background: '#4285F4', borderRadius: 16 }} onClick={() => {
+                const link = document.createElement('a');
+                link.href = payQR;
+                link.download = 'Nimish_Saxena_QR.jpg';
+                link.click();
+                setTimeout(() => window.location.href = `tez://upi/pay?${upiBase}`, 300);
+              }}>
+                Pay via Google Pay
+              </button>
+              <button className="button-primary" style={{ justifyContent: 'center', padding: '18px', background: '#00BAF2', borderRadius: 16 }} onClick={() => {
+                const link = document.createElement('a');
+                link.href = payQR;
+                link.download = 'Nimish_Saxena_QR.jpg';
+                link.click();
+                setTimeout(() => window.location.href = `paytmmp://pay?${upiBase}`, 300);
+              }}>
+                Pay via Paytm
+              </button>
             </div>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Save/Screenshot and scan to pay wirelessly</p>
+
+            <div style={{ marginTop: 20, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+               <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Safety Entry: {mobileNo}</span>
+               <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
+                 <button onClick={() => { navigator.clipboard.writeText(mobileNo); }} className="button-secondary" style={{ flex: 1, fontSize: '0.8rem' }}>COPY NO</button>
+                 <button onClick={() => { navigator.clipboard.writeText(upiID); }} className="button-secondary" style={{ flex: 1, fontSize: '0.8rem' }}>COPY VPA</button>
+               </div>
+            </div>
           </div>
         </div>
 
-        <div style={{ marginTop: 40, display: 'flex', flexDirection: 'column', gap: 15, width: '100%', maxWidth: 350 }}>
-          <button className="button-primary" style={{ justifyContent: 'center', padding: '18px', background: 'var(--accent-gradient)' }} onClick={() => {
+        <div style={{ marginTop: 50, display: 'flex', flexDirection: 'column', gap: 15, width: '100%', maxWidth: 350 }}>
+          <button className="button-primary" style={{ justifyContent: 'center', padding: '20px', fontSize: '1.3rem', background: 'var(--accent-gradient)' }} onClick={() => {
              const newOrder = {
               id: '#' + Math.floor(Math.random() * 9000 + 1000),
               items: [...cart],
@@ -170,7 +190,7 @@ const App = () => {
             setCart([]);
             setView('order-placed');
           }}>
-            I have completed payment <CheckCircle size={20} />
+            I have completed payment <CheckCircle size={26} />
           </button>
           <button className="button-secondary" onClick={() => setView('menu')}>
             Cancel Order
