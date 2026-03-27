@@ -46,17 +46,6 @@ const App = () => {
 
   const handlePayNow = () => {
     if (total === 0) return;
-    
-    // Generate a unique transaction reference
-    const transactionId = 'T' + Date.now();
-    
-    // Dynamic UPI link with auto-populated amount and unique transaction ID
-    const upiLink = `upi://pay?pa=8931040270@ptaxis&pn=GastroGo&tr=${transactionId}&am=${total}&cu=INR&tn=Order_${transactionId}`;
-    
-    // Trigger UPI app selection
-    window.location.href = upiLink;
-
-    // Transition to processing view wait for manual confirmation
     setView('processing');
   };
 
@@ -100,9 +89,21 @@ const App = () => {
                 <span style={{ fontSize: '1.25rem', color: 'var(--accent)', fontWeight: 600 }}>₹{item.price}</span>
               </div>
               <p style={{ color: 'var(--text-secondary)', marginBottom: 20, fontSize: '0.9rem' }}>{item.desc}</p>
-              <button className="button-primary" style={{ width: '100%' }} onClick={() => addToCart(item)}>
-                Add to Order
-              </button>
+              {cart.find(i => i.id === item.id) ? (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--accent-gradient)', borderRadius: 12, padding: '5px 10px' }}>
+                  <button onClick={() => updateQty(item.id, -1)} style={{ background: 'none', border: 'none', color: 'white', padding: 10, cursor: 'pointer' }}>
+                    <Minus size={20} fontWeight={800} />
+                  </button>
+                  <span style={{ fontSize: '1.2rem', fontWeight: 800, color: 'white' }}>{cart.find(i => i.id === item.id).qty}</span>
+                  <button onClick={() => updateQty(item.id, 1)} style={{ background: 'none', border: 'none', color: 'white', padding: 10, cursor: 'pointer' }}>
+                    <Plus size={20} fontWeight={800} />
+                  </button>
+                </div>
+              ) : (
+                <button className="button-primary" style={{ width: '100%' }} onClick={() => addToCart(item)}>
+                  Add to Order
+                </button>
+              )}
             </div>
           </div>
         ))}
