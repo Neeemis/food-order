@@ -117,26 +117,18 @@ const App = () => {
     const upiLink = `upi://pay?${upiBase}`;
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiLink)}`;
     
-    // Automatic trigger to open the payment app immediately
-    useEffect(() => {
-      const timer = setTimeout(() => {
-        window.location.href = upiLink;
-      }, 500);
-      return () => clearTimeout(timer);
-    }, [upiLink]);
-
     return (
       <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '80vh', padding: '40px 20px', textAlign: 'center' }}>
-        <h2 style={{ fontSize: '2.5rem', marginBottom: 15 }}>Launching Payment...</h2>
+        <h2 style={{ fontSize: '2.5rem', marginBottom: 15 }}>Complete Payment</h2>
         <p style={{ color: 'var(--text-secondary)', marginBottom: 30, maxWidth: 400 }}>
-          Your payment app should open automatically. Use the QR below if blocked.
+          Select **GPay** or **Paytm** to finalize your order.
         </p>
         
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 30, width: '100%', maxWidth: 800 }}>
           {/* Method 1: App Links */}
           <div className="glass-morphism" style={{ padding: 30, borderRadius: 24, display: 'flex', flexDirection: 'column', gap: 15 }}>
             <h3 style={{ marginBottom: 10, fontSize: '1.2rem' }}>Method 1: Quick Links</h3>
-            <button className="button-primary" style={{ justifyContent: 'center', padding: '16px', background: '#4285F4' }} onClick={() => window.location.href = upiLink}>
+            <button className="button-primary" style={{ justifyContent: 'center', padding: '16px', background: '#4285F4' }} onClick={() => window.location.href = `tez://upi/pay?${upiBase}`}>
               Try Google Pay Again
             </button>
             <button className="button-primary" style={{ justifyContent: 'center', padding: '16px', background: '#00BAF2' }} onClick={() => window.location.href = `paytmmp://pay?${upiBase}`}>
