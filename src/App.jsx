@@ -47,8 +47,11 @@ const App = () => {
   const handlePayNow = () => {
     if (total === 0) return;
     
-    // In a real app, this would be a dynamic UPI link with actual merchant PA
-    const upiLink = `upi://pay?pa=nimish@upi&pn=GastroGo&am=${total}&cu=INR&tn=FoodOrder`;
+    // Generate a unique transaction reference
+    const transactionId = 'T' + Date.now();
+    
+    // Dynamic UPI link with auto-populated amount and unique transaction ID
+    const upiLink = `upi://pay?pa=8931040270@ptaxis&pn=GastroGo&tr=${transactionId}&am=${total}&cu=INR&tn=Order_${transactionId}`;
     
     // Trigger UPI app selection
     window.location.href = upiLink;
@@ -113,9 +116,9 @@ const App = () => {
         animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }}
         style={{ width: 80, height: 80, border: '6px solid rgba(255,140,0,0.1)', borderTopColor: 'var(--accent)', borderRadius: '50%', marginBottom: 30 }}
       />
-      <h2 style={{ fontSize: '2.2rem', marginBottom: 15 }}>Waiting for Payment</h2>
+      <h2 style={{ fontSize: '2.2rem', marginBottom: 15 }}>Choose Your App</h2>
       <p style={{ color: 'var(--text-secondary)', marginBottom: 40, maxWidth: 400 }}>
-        Please complete the payment in your UPI app (GPay/Paytm/PhonePe). Once done, click the button below.
+        A system prompt should have appeared. Please select **GPay** or **Paytm** to transfer **₹{total}** to **8931040270@ptaxis**.
       </p>
       
       <div style={{ display: 'flex', gap: 15, flexDirection: 'column', width: '100%', maxWidth: 300 }}>
