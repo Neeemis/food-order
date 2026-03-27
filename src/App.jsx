@@ -110,39 +110,59 @@ const App = () => {
     </div>
   );
 
-  const ProcessingView = () => (
-    <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '80vh', textAlign: 'center' }}>
-      <motion.div 
-        animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }}
-        style={{ width: 80, height: 80, border: '6px solid rgba(255,140,0,0.1)', borderTopColor: 'var(--accent)', borderRadius: '50%', marginBottom: 30 }}
-      />
-      <h2 style={{ fontSize: '2.2rem', marginBottom: 15 }}>Choose Your App</h2>
-      <p style={{ color: 'var(--text-secondary)', marginBottom: 40, maxWidth: 400 }}>
-        A system prompt should have appeared. Please select **GPay** or **Paytm** to transfer **₹{total}** to **8931040270@ptaxis**.
-      </p>
-      
-      <div style={{ display: 'flex', gap: 15, flexDirection: 'column', width: '100%', maxWidth: 300 }}>
-        <button className="button-primary" style={{ justifyContent: 'center', padding: '18px' }} onClick={() => {
-           const newOrder = {
-            id: '#' + Math.floor(Math.random() * 9000 + 1000),
-            items: [...cart],
-            total,
-            status: 'Paid',
-            timestamp: new Date().toLocaleString()
-          };
-          setOrders([newOrder, ...orders]);
-          setLastOrder(newOrder);
-          setCart([]);
-          setView('order-placed');
-        }}>
-          I have completed payment <CheckCircle size={20} />
-        </button>
-        <button className="button-secondary" onClick={() => setView('menu')}>
-          Cancel Order
-        </button>
+  const ProcessingView = () => {
+    const upiBase = `pa=8931040270@ptaxis&pn=GastroGo&am=${total}&cu=INR&tn=Order_${Date.now()}`;
+    
+    return (
+      <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '80vh', textAlign: 'center' }}>
+        <h2 style={{ fontSize: '2.5rem', marginBottom: 15 }}>Complete Payment</h2>
+        <p style={{ color: 'var(--text-secondary)', marginBottom: 40, maxWidth: 400 }}>
+          Choose your preferred app to pay **₹{total}** to **8931040270@ptaxis**.
+        </p>
+        
+        <div style={{ display: 'flex', gap: 20, flexDirection: 'column', width: '100%', maxWidth: 350 }}>
+          {/* GPay Button */}
+          <button 
+            className="button-primary" 
+            style={{ justifyContent: 'center', padding: '20px', background: '#4285F4' }} 
+            onClick={() => window.location.href = `upi://pay?${upiBase}`}
+          >
+            Pay with Google Pay
+          </button>
+          
+          {/* Paytm Button */}
+          <button 
+            className="button-primary" 
+            style={{ justifyContent: 'center', padding: '20px', background: '#00BAF2' }} 
+            onClick={() => window.location.href = `paytmmp://pay?${upiBase}`}
+          >
+            Pay with Paytm
+          </button>
+
+          <div style={{ height: 1, background: 'rgba(255,255,255,0.1)', margin: '10px 0' }} />
+
+          <button className="button-primary" style={{ justifyContent: 'center', padding: '18px', background: 'var(--accent-gradient)' }} onClick={() => {
+             const newOrder = {
+              id: '#' + Math.floor(Math.random() * 9000 + 1000),
+              items: [...cart],
+              total,
+              status: 'Paid',
+              timestamp: new Date().toLocaleString()
+            };
+            setOrders([newOrder, ...orders]);
+            setLastOrder(newOrder);
+            setCart([]);
+            setView('order-placed');
+          }}>
+            I have completed payment <CheckCircle size={20} />
+          </button>
+          <button className="button-secondary" onClick={() => setView('menu')}>
+            Cancel Order
+          </button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const ConfirmedView = () => (
     <div className="container" style={{ textAlign: 'center', padding: '100px 0' }}>
