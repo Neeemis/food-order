@@ -111,36 +111,59 @@ const App = () => {
   );
 
   const ProcessingView = () => {
-    const upiBase = `pa=8931040270@ptaxis&pn=GastroGo&am=${total}&cu=INR&tn=Order_${Date.now()}`;
+    const upiID = '8931040270@ptaxis';
+    // Adding mcc=5812 (Restaurants) and mode=02 (Secure intent) to improve Paytm/GPay trust
+    const upiBase = `pa=${upiID}&pn=GastroGo&mcc=5812&mode=02&am=${total}&cu=INR&tn=Order_${Date.now()}`;
+    const upiLink = `upi://pay?${upiBase}`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiLink)}`;
     
+    // Automatic trigger to open the payment app immediately
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        window.location.href = upiLink;
+      }, 500);
+      return () => clearTimeout(timer);
+    }, [upiLink]);
+
     return (
-      <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '80vh', textAlign: 'center' }}>
-        <h2 style={{ fontSize: '2.5rem', marginBottom: 15 }}>Complete Payment</h2>
-        <p style={{ color: 'var(--text-secondary)', marginBottom: 40, maxWidth: 400 }}>
-          Choose your preferred app to pay **₹{total}** to **8931040270@ptaxis**.
+      <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '80vh', padding: '40px 20px', textAlign: 'center' }}>
+        <h2 style={{ fontSize: '2.5rem', marginBottom: 15 }}>Launching Payment...</h2>
+        <p style={{ color: 'var(--text-secondary)', marginBottom: 30, maxWidth: 400 }}>
+          Your payment app should open automatically. Use the QR below if blocked.
         </p>
         
-        <div style={{ display: 'flex', gap: 20, flexDirection: 'column', width: '100%', maxWidth: 350 }}>
-          {/* GPay Button */}
-          <button 
-            className="button-primary" 
-            style={{ justifyContent: 'center', padding: '20px', background: '#4285F4' }} 
-            onClick={() => window.location.href = `upi://pay?${upiBase}`}
-          >
-            Pay with Google Pay
-          </button>
-          
-          {/* Paytm Button */}
-          <button 
-            className="button-primary" 
-            style={{ justifyContent: 'center', padding: '20px', background: '#00BAF2' }} 
-            onClick={() => window.location.href = `paytmmp://pay?${upiBase}`}
-          >
-            Pay with Paytm
-          </button>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 30, width: '100%', maxWidth: 800 }}>
+          {/* Method 1: App Links */}
+          <div className="glass-morphism" style={{ padding: 30, borderRadius: 24, display: 'flex', flexDirection: 'column', gap: 15 }}>
+            <h3 style={{ marginBottom: 10, fontSize: '1.2rem' }}>Method 1: Quick Links</h3>
+            <button className="button-primary" style={{ justifyContent: 'center', padding: '16px', background: '#4285F4' }} onClick={() => window.location.href = upiLink}>
+              Try Google Pay Again
+            </button>
+            <button className="button-primary" style={{ justifyContent: 'center', padding: '16px', background: '#00BAF2' }} onClick={() => window.location.href = `paytmmp://pay?${upiBase}`}>
+              Try Paytm Again
+            </button>
+            
+            <div style={{ marginTop: 20, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: 10 }}>Copy UPI ID for manual pay:</p>
+              <div style={{ background: 'rgba(255,255,255,0.05)', padding: '12px', borderRadius: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <code style={{ fontSize: '0.9rem', color: 'var(--accent)' }}>{upiID}</code>
+                <button onClick={() => { navigator.clipboard.writeText(upiID); }} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600 }}>COPY</button>
+              </div>
+            </div>
+          </div>
 
-          <div style={{ height: 1, background: 'rgba(255,255,255,0.1)', margin: '10px 0' }} />
+          {/* Method 2: QR Code */}
+          <div className="glass-morphism" style={{ padding: 30, borderRadius: 24, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <h3 style={{ marginBottom: 20, fontSize: '1.2rem' }}>Method 2: Scan QR</h3>
+            <p style={{ fontSize: '0.8rem', color: 'var(--accent)', marginBottom: 15, fontWeight: 600 }}>Trusted Method (No Alerts)</p>
+            <div style={{ background: 'white', padding: 15, borderRadius: 16, marginBottom: 15 }}>
+              <img src={qrUrl} alt="Payment QR Code" style={{ width: 180, height: 180, display: 'block' }} />
+            </div>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Save/Screenshot and scan to pay wirelessly</p>
+          </div>
+        </div>
 
+        <div style={{ marginTop: 40, display: 'flex', flexDirection: 'column', gap: 15, width: '100%', maxWidth: 350 }}>
           <button className="button-primary" style={{ justifyContent: 'center', padding: '18px', background: 'var(--accent-gradient)' }} onClick={() => {
              const newOrder = {
               id: '#' + Math.floor(Math.random() * 9000 + 1000),
